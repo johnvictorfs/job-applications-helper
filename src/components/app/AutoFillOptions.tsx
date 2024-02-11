@@ -3,7 +3,7 @@ import { autoFillStorageKey, type AutoFillItem } from "@src/shared";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TrashIcon } from "@radix-ui/react-icons"
+import { Trash } from "@/assets/icons/Trash";
  
 export function AutoFillOptions() {
   const [newAutoFill, setNewAutoFill] = useState<AutoFillItem>({ key: '', value: '' })
@@ -85,7 +85,7 @@ export function AutoFillOptions() {
 
               <div className="absolute top-4 right-4">
                 <Button size="icon" variant="outline" onClick={() => removeAutoFill(autoFill.key)}>
-                  <TrashIcon className="h-4 w-4" />
+                  <Trash className="h-4 w-4" />
                 </Button>
               </div>
             </Alert>
