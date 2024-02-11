@@ -1,6 +1,6 @@
-import React from 'react';
-import '@pages/options/Options.css';
+import '@/assets/styles/tailwind.css'
+import { AutoFillOptions } from '@/components/app/AutoFillOptions';
 
 export default function Options(): JSX.Element {
-  return <div className="container">Options</div>;
+  return <AutoFillOptions />
 }

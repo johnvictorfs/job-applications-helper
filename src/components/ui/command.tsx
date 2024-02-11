@@ -120,10 +120,6 @@ const CommandItem = React.forwardRef<
       className
     )}
     {...props}
-    style={{
-      borderRadius: 8,
-      ...props.style,
-    }}
   />
 ))
 

@@ -1,4 +1,4 @@
-import './style.css'
+import '@/assets/styles/tailwind.css'
 import { messageEvent, type AutoFillItem } from '@src/shared';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client'
@@ -17,8 +17,12 @@ export function AutoCompleteCommand() {
   const [autoFills, setAutoFills] = useState<AutoFillItem[]>([])
   const activeElement = useRef(document.activeElement as HTMLElement)
 
-  useEffect(() => {
+  const requestUpdateAutoFill = () => {
     chrome.runtime.sendMessage({ action: messageEvent.requestUpdateAutoFill })
+  }
+
+  useEffect(() => {
+    requestUpdateAutoFill()
 
     const messageListener = (request: { action: string, autoFills: AutoFillItem[] }) => {
       if (request.action === messageEvent.autoFillUpdated) {
@@ -36,6 +40,7 @@ export function AutoCompleteCommand() {
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "m" && (e.metaKey || e.ctrlKey)) {
+        requestUpdateAutoFill()
         const currentActiveElement = document.activeElement as HTMLElement
         activeElement.current = currentActiveElement
 
