@@ -1,5 +1,5 @@
 import '@/assets/styles/tailwind.css'
-import { messageEvent, type AutoFillItem } from '@src/shared';
+import { messageEvent, type AutoFillItem, DEFAULT_AUTO_FILL_KEYBIND } from '@src/shared';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom/client'
 
@@ -16,6 +16,7 @@ export function AutoCompleteCommand() {
   const [open, setOpen] = useState(false)
   const [autoFills, setAutoFills] = useState<AutoFillItem[]>([])
   const activeElement = useRef(document.activeElement as HTMLElement)
+  const [autoFillKeybind, setAutoFillKeybind] = useState<string | null>()
 
   const requestUpdateAutoFill = () => {
     chrome.runtime.sendMessage({ action: messageEvent.requestUpdateAutoFill })
@@ -24,9 +25,13 @@ export function AutoCompleteCommand() {
   useEffect(() => {
     requestUpdateAutoFill()
 
-    const messageListener = (request: { action: string, autoFills: AutoFillItem[] }) => {
+    const messageListener = (request: { action: string, autoFills: AutoFillItem[], autoFillKeybind: string }) => {
       if (request.action === messageEvent.autoFillUpdated) {
         setAutoFills(request.autoFills)
+      }
+
+      if (request.action === messageEvent.updateAutoFillKeybind) {
+        setAutoFillKeybind(request.autoFillKeybind)
       }
     }
 
@@ -39,19 +44,20 @@ export function AutoCompleteCommand() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "m" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === (autoFillKeybind || DEFAULT_AUTO_FILL_KEYBIND) && (e.metaKey || e.ctrlKey)) {
         requestUpdateAutoFill()
         const currentActiveElement = document.activeElement as HTMLElement
         activeElement.current = currentActiveElement
-
         e.preventDefault()
-        setOpen((open) => !open)
+        if (activeElement.current && 'value' in activeElement.current) {
+          setOpen((open) => !open)
+        }
       }
     }
 
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
-  }, [])
+  }, [autoFillKeybind])
 
   const submitAutoFill = (autoFill: AutoFillItem) => {
     if (activeElement.current && 'value' in activeElement.current) {

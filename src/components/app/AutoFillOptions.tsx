@@ -1,28 +1,45 @@
 import { useEffect, useState } from "react";
-import { autoFillStorageKey, type AutoFillItem } from "@src/shared";
+import { storageKeys, type AutoFillItem } from "@src/shared";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Trash } from "@/assets/icons/Trash";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
  
 export function AutoFillOptions() {
   const [newAutoFill, setNewAutoFill] = useState<AutoFillItem>({ key: '', value: '' })
   const [autoFills, setAutoFills] = useState<AutoFillItem[]>([])
+  const [autoFillKeybind, setAutoFillKeybind] = useState<string | null>()
+
+  const updateAutoFillKeybind = (key: string | null) => {
+    chrome.storage.sync.set({ [storageKeys.autoFillKeybind]: key })
+  }
 
   useEffect(() => {
     const changeListener = (changes: { [key: string]: chrome.storage.StorageChange; }) => {
       for (const [key, { newValue }] of Object.entries(changes)) {
-        if (key === autoFillStorageKey) {
+        if (key === storageKeys.autoFills) {
           setAutoFills(newValue)
+        }
+
+        if (key === storageKeys.autoFillKeybind) {
+          setAutoFillKeybind(newValue)
         }
       }
     }
 
     chrome.storage.onChanged.addListener(changeListener);
 
-    chrome.storage.sync.get(autoFillStorageKey, (data) => {
-      if (data[autoFillStorageKey]) {
-        setAutoFills(data[autoFillStorageKey])
+    chrome.storage.sync.get(storageKeys.autoFills, (data) => {
+      if (data[storageKeys.autoFills]) {
+        setAutoFills(data[storageKeys.autoFills])
+      }
+    })
+
+    chrome.storage.sync.get(storageKeys.autoFillKeybind, (data) => {
+      if (data[storageKeys.autoFillKeybind]) {
+        setAutoFillKeybind(data[storageKeys.autoFillKeybind])
       }
     })
 
@@ -38,7 +55,7 @@ export function AutoFillOptions() {
         return
       }
 
-      chrome.storage.sync.set({ [autoFillStorageKey]: [...autoFills, newAutoFill] })
+      chrome.storage.sync.set({ [storageKeys.autoFills]: [...autoFills, newAutoFill] })
       setNewAutoFill({ key: '', value: '' })
     }
   }
@@ -46,19 +63,34 @@ export function AutoFillOptions() {
   const removeAutoFill = (key: string) => {
     if (confirm(`Are you sure you want to remove '${key}'?`)) {
       const newAutoFills = autoFills.filter((autoFill) => autoFill.key !== key)
-      chrome.storage.sync.set({ [autoFillStorageKey]: newAutoFills })
+      chrome.storage.sync.set({ [storageKeys.autoFills]: newAutoFills })
     }
   }
 
   return (
-    <div className="absolute top-0 left-0 right-0 bottom-0 text-center h-full p-3 overflow-y-auto">
-      <header className="flex flex-col items-center justify-center text-white">
-        <h1 className="text-2xl">AutoFill</h1>
+    <div className="absolute top-0 left-0 right-0 bottom-0 h-full p-3 overflow-y-auto">
+      <header className="flex flex-col text-white">
+        <Label htmlFor="keybind">Auto-fill keybind</Label>
+        <div className="flex items-center justify-center">
+          <div className="px-1 mt-3">Ctrl/Cmd</div>
+          <Input
+            id="keybind"
+            value={autoFillKeybind ?? ''}
+            onChange={(e) => {
+              updateAutoFillKeybind(e.target.value.trim().toLowerCase().charAt(0) || null)
+            }}
+            placeholder="AutoFill Keybind"
+            className="mt-3 p-2"
+          />
+        </div>
+
+        <Separator className="my-3" />
+
         <Input
           value={newAutoFill?.key ?? ''}
           onChange={(e) => setNewAutoFill({ ...newAutoFill, key: e.target.value })}
           placeholder="Key (ex.: LinkedIn Url)"
-          className="mt-3 p-2"
+          className="p-2"
         />
 
         <Input
@@ -72,14 +104,14 @@ export function AutoFillOptions() {
           Add AutoFill
         </Button>
 
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col">
           {autoFills.map((autoFill) => (
             <Alert key={autoFill.key} className="w-full mt-2">
-              <AlertTitle className="font-bold mr-14">
+              <AlertTitle className="font-bold">
                 {autoFill.key}
               </AlertTitle>
 
-              <AlertDescription className="mr-14">
+              <AlertDescription>
                 {autoFill.value}
               </AlertDescription>
 
