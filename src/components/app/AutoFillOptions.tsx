@@ -72,7 +72,9 @@ export function AutoFillOptions() {
       <header className="flex flex-col text-white">
         <Label htmlFor="keybind">Auto-fill keybind</Label>
         <div className="flex items-center justify-center">
-          <div className="px-1 mt-3">Ctrl/Cmd</div>
+          <kbd className="mt-3 bg-muted px-2 mx-2 font-mono text-[12px] font-medium text-muted-foreground opacity-100 rounded-md w-32">
+            Ctrl / Cmd
+          </kbd>
           <Input
             id="keybind"
             value={autoFillKeybind ?? ''}
@@ -117,7 +119,7 @@ export function AutoFillOptions() {
 
               <div className="absolute top-4 right-4">
                 <Button size="icon" variant="outline" onClick={() => removeAutoFill(autoFill.key)}>
-                  <Trash className="h-4 w-4" />
+                  <Trash className="h-4 w-4 text-red-500" />
                 </Button>
               </div>
             </Alert>
