@@ -90,24 +90,16 @@ export function AutoCompleteCommand() {
   )
 }
 
-const rootElement = document.createElement('div')
-rootElement.id = '__application-auto-complete_root'
-document.body.appendChild(rootElement)
-
-ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>
-    <div className="__application-auto-complete_root">
-      <AutoCompleteCommand />
-    </div>
-  </React.StrictMode>,
-)
-
-// chrome.runtime.onMessage.addListener((request) => {
-//   if (request.action === messageEvent.submitAutoFill) {
-//     const activeElement = document.activeElement as HTMLInputElement;
-
-//     if (activeElement) {
-//       activeElement.value = request.autoFill
-//     }
-//   }
-// })
+setTimeout(() => {
+  const rootElement = document.createElement('div')
+  rootElement.id = '__application-auto-complete_root'
+  document.body.appendChild(rootElement)
+  
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <div className="__application-auto-complete_root">
+        <AutoCompleteCommand />
+      </div>
+    </React.StrictMode>,
+  )
+}, 1500)
