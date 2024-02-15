@@ -1,6 +1,14 @@
 # Job Applications Helper
 
-Helps you apply to jobs by auto-filling application forms easily.
+A Chrome (soon Firefox) that helps you apply to jobs by auto-filling application forms easily.
+
+Create auto-fills with the wanted values
+
+![Options](images/popup-example.png)
+
+Fill them in form inputs by pressing the keybind setup in the extension
+
+![Usage Example](images/usage-example.gif)
 
 ---
 
