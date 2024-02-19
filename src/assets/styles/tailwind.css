@@ -1,3 +1,7 @@
+/**
+ * WARN: After changing this file run 'yarn build'
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

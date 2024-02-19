@@ -61,6 +61,7 @@ export default defineConfig({
   ],
   publicDir,
   build: {
+    cssCodeSplit: false,
     outDir,
     sourcemap: isDev,
     emptyOutDir: !isDev
